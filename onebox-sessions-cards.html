@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Próximos partidos · RC Celta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --celta-sky: #7AB1D9;
+        --celta-sky-dark: #5C97C2;
+        --celta-navy: #0A1A3F;
+        --celta-red: #E4002B;
+        --page-bg: #F4F6F9;
+        --card: #FFFFFF;
+        --card-border: #E2E6EC;
+        --muted: #5A6478;
+
+        --green: #1F9D55;
+        --green-bg: #E6F6EC;
+        --amber: #B7791F;
+        --amber-bg: #FCF1D6;
+        --red: #C4173B;
+        --red-bg: #FCE5EA;
+        --gray: #6B7280;
+        --gray-bg: #EEF1F5;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        color: var(--celta-navy);
+        line-height: 1.5;
+        background: var(--page-bg);
+      }
+
+      a { color: inherit; }
+
+      /* ---------- Top nav ---------- */
+      .topbar {
+        background: #fff;
+        border-bottom: 1px solid var(--card-border);
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .topbar img { height: 32px; width: auto; }
+
+      .topbar span {
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.95rem;
+      }
+
+      /* ---------- Hero / search ---------- */
+      header.hero {
+        background:
+          linear-gradient(180deg, rgba(10, 26, 63, 0.05), rgba(10, 26, 63, 0.18)),
+          var(--celta-sky);
+        color: #fff;
+        padding: 2.75rem 1.5rem 2.5rem;
+      }
+
+      .hero-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+
+      .hero p { margin: 0; opacity: 0.92; max-width: 640px; }
+
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.25rem;
+        font-size: 0.85rem;
+        opacity: 0.92;
+      }
+
+      .hero-meta strong { font-weight: 700; }
+
+      .search {
+        position: relative;
+        max-width: 480px;
+      }
+
+      .search input {
+        width: 100%;
+        padding: 0.85rem 1rem 0.85rem 2.65rem;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 6px;
+        font: inherit;
+        color: var(--celta-navy);
+      }
+
+      .search input:focus {
+        outline: none;
+        border-color: #fff;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+      }
+
+      .search svg {
+        position: absolute;
+        top: 50%;
+        left: 0.9rem;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        color: var(--muted);
+      }
+
+      /* ---------- Grid ---------- */
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 3rem;
+      }
+
+      .results-bar {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .results-bar strong { color: var(--celta-navy); }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+      }
+
+      /* ---------- Card ---------- */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(10, 26, 63, 0.08);
+      }
+
+      .card .imgwrap {
+        position: relative;
+        aspect-ratio: 16 / 10;
+        background: linear-gradient(135deg, var(--celta-sky), var(--celta-navy));
+        overflow: hidden;
+      }
+
+      .card .imgwrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .card .imgwrap .date-pill {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
+        padding: 0.3rem 0.6rem;
+        background: rgba(10, 26, 63, 0.78);
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        border-radius: 4px;
+        text-transform: uppercase;
+        backdrop-filter: blur(4px);
+      }
+
+      .card .body {
+        padding: 1rem 1.1rem 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        flex: 1;
+      }
+
+      .card h3 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+
+      .card .subtitle {
+        margin: -0.4rem 0 0;
+        font-size: 0.78rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 600;
+      }
+
+      .card .row {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .card .row svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        color: var(--celta-sky-dark);
+      }
+
+      .card .price {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--celta-navy);
+        margin-top: auto;
+      }
+
+      .card .price small {
+        font-weight: 500;
+        color: var(--muted);
+        margin-left: 0.25rem;
+        font-size: 0.78rem;
+      }
+
+      /* ---------- Availability bar (color-coded) ---------- */
+      .avail {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid var(--card-border);
+      }
+
+      .avail-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.8rem;
+      }
+
+      .avail-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .avail-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .avail-pill.green { color: var(--green); background: var(--green-bg); }
+      .avail-pill.amber { color: var(--amber); background: var(--amber-bg); }
+      .avail-pill.red   { color: var(--red);   background: var(--red-bg); }
+      .avail-pill.gray  { color: var(--gray);  background: var(--gray-bg); }
+
+      .avail-counts {
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+      }
+
+      .avail-counts strong { color: var(--celta-navy); font-weight: 700; }
+
+      .avail-bar {
+        position: relative;
+        height: 6px;
+        background: #ECEFF3;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .avail-bar > span {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.3s ease;
+      }
+
+      .avail-bar.green > span { background: var(--green); }
+      .avail-bar.amber > span { background: var(--amber); }
+      .avail-bar.red   > span { background: var(--red); }
+      .avail-bar.gray  > span { background: var(--gray); }
+
+      /* ---------- States ---------- */
+      .empty, .loading, .error {
+        padding: 3rem 1.5rem;
+        text-align: center;
+        color: var(--muted);
+        background: #fff;
+        border: 1px dashed var(--card-border);
+        border-radius: 8px;
+      }
+
+      .error { border-style: solid; border-color: #F5C2C7; background: #FDF1F2; color: #842029; }
+
+      .error code {
+        display: inline-block;
+        margin-top: 0.5rem;
+        padding: 0.3rem 0.55rem;
+        background: #fff;
+        border: 1px solid #F5C2C7;
+        border-radius: 4px;
+        font-size: 0.85em;
+      }
+
+      footer {
+        background: var(--celta-navy);
+        color: #fff;
+        text-align: center;
+        padding: 1.25rem 1rem;
+        font-size: 0.82rem;
+        opacity: 0.95;
+      }
+
+      footer span { opacity: 0.75; }
+
+      @media (min-width: 720px) {
+        .hero h1 { font-size: 2.4rem; }
+        header.hero { padding: 3.5rem 2rem 3rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <nav class="topbar">
+      <img src="assets/Celta%20de%20Vigo.png" alt="">
+      <span>RC Celta</span>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-inner">
+        <div>
+          <h1>Próximos partidos</h1>
+          <p>Disponibilidad en tiempo real desde ONEBOX. Filtra por nombre del partido o estadio.</p>
+        </div>
+        <div class="hero-meta" id="hero-meta"></div>
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="q" type="search" placeholder="Buscar por partido o estadio…" autocomplete="off">
+        </label>
+      </div>
+    </header>
+
+    <main>
+      <div class="results-bar">
+        <span id="results-count">Cargando…</span>
+        <span id="legend">
+          <span class="avail-pill green" style="margin-right:.4rem">Libre</span>
+          <span class="avail-pill amber" style="margin-right:.4rem">Pocas</span>
+          <span class="avail-pill red">Casi lleno</span>
+        </span>
+      </div>
+
+      <div id="grid" class="grid"></div>
+      <div id="state"></div>
+    </main>
+
+    <footer>
+      <span>© RC Celta de Vigo · Datos vía ONEBOX (sandbox)</span>
+    </footer>
+
+    <script>
+      const grid = document.getElementById('grid');
+      const state = document.getElementById('state');
+      const search = document.getElementById('q');
+      const resultsCount = document.getElementById('results-count');
+      const heroMeta = document.getElementById('hero-meta');
+
+      let SESSIONS = [];
+
+      const fmtDate = (iso) => {
+        if (!iso) return '—';
+        const d = new Date(iso);
+        if (isNaN(d)) return '—';
+        return d.toLocaleString('es-ES', {
+          weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit',
+        });
+      };
+
+      const fmtDatePill = (iso) => {
+        if (!iso) return '';
+        const d = new Date(iso);
+        if (isNaN(d)) return '';
+        return d.toLocaleString('es-ES', { day: '2-digit', month: 'short' }).replace('.', '').toUpperCase();
+      };
+
+      const fmtPrice = (v, currency = 'EUR') => {
+        if (v == null) return null;
+        try {
+          return new Intl.NumberFormat('es-ES', { style: 'currency', currency, maximumFractionDigits: 0 }).format(v);
+        } catch {
+          return `${v} €`;
+        }
+      };
+
+      // Color tier from fullness ratio (1 - available/total).
+      const fillTier = (total, available) => {
+        if (!total || total <= 0 || available == null) return 'gray';
+        const fillRatio = (total - available) / total;
+        if (fillRatio < 0.5) return 'green';
+        if (fillRatio < 0.8) return 'amber';
+        return 'red';
+      };
+
+      const tierLabel = (tier) => ({
+        green: 'Libre',
+        amber: 'Pocas',
+        red: 'Casi lleno',
+        gray: 'Sin datos',
+      }[tier]);
+
+      const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      }[c]));
+
+      function cardHTML(s) {
+        const tier = fillTier(s.total_seats, s.available_seats);
+        const fillPct = (s.total_seats && s.available_seats != null)
+          ? Math.round(((s.total_seats - s.available_seats) / s.total_seats) * 100)
+          : 0;
+
+        const priceMin = fmtPrice(s.price_min, s.currency);
+        const priceMax = fmtPrice(s.price_max, s.currency);
+        let priceLine = '';
+        if (priceMin && priceMax && priceMin !== priceMax) priceLine = `${priceMin} – ${priceMax}`;
+        else if (priceMin) priceLine = priceMin;
+
+        const venueLine = [s.venue_name, s.venue_city].filter(Boolean).join(' · ');
+        const datePill = fmtDatePill(s.date_start);
+
+        const seats = (s.available_seats != null && s.total_seats)
+          ? `<strong>${s.available_seats.toLocaleString('es-ES')}</strong> / ${s.total_seats.toLocaleString('es-ES')} libres`
+          : '<span style="opacity:.7">Sin datos de aforo</span>';
+
+        const img = s.image
+          ? `<img src="${escapeHtml(s.image)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+          : '';
+
+        return `
+          <article class="card" data-tier="${tier}">
+            <div class="imgwrap">
+              ${img}
+              ${datePill ? `<span class="date-pill">${escapeHtml(datePill)}</span>` : ''}
+            </div>
+            <div class="body">
+              ${s.subtitle ? `<p class="subtitle">${escapeHtml(s.subtitle)}</p>` : ''}
+              <h3>${escapeHtml(s.title || '(sin título)')}</h3>
+              <div class="row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>${escapeHtml(fmtDate(s.date_start))}</span>
+              </div>
+              ${venueLine ? `
+              <div class="row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>${escapeHtml(venueLine)}</span>
+              </div>` : ''}
+              ${priceLine ? `<div class="price">${escapeHtml(priceLine)}<small>desde / hasta</small></div>` : ''}
+              <div class="avail">
+                <div class="avail-head">
+                  <span class="avail-pill ${tier}">${tierLabel(tier)}</span>
+                  <span class="avail-counts">${seats}</span>
+                </div>
+                <div class="avail-bar ${tier}"><span style="width:${fillPct}%"></span></div>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function render(list) {
+        if (!list.length) {
+          grid.innerHTML = '';
+          state.innerHTML = '<div class="empty">No hay partidos que coincidan con tu búsqueda.</div>';
+          resultsCount.textContent = '0 partidos';
+          return;
+        }
+        state.innerHTML = '';
+        grid.innerHTML = list.map(cardHTML).join('');
+        resultsCount.innerHTML = `<strong>${list.length}</strong> partido${list.length === 1 ? '' : 's'}`;
+      }
+
+      function filter(query) {
+        const q = query.trim().toLowerCase();
+        if (!q) return SESSIONS;
+        return SESSIONS.filter((s) => {
+          const haystack = [s.title, s.subtitle, s.venue_name, s.venue_city]
+            .filter(Boolean).join(' ').toLowerCase();
+          return haystack.includes(q);
+        });
+      }
+
+      search.addEventListener('input', (e) => render(filter(e.target.value)));
+
+      function summarizeMeta(list) {
+        const cities = new Set(list.map((s) => s.venue_city).filter(Boolean));
+        const totalAvail = list.reduce((acc, s) => acc + (s.available_seats || 0), 0);
+        heroMeta.innerHTML = `
+          <span><strong>${list.length}</strong> partidos</span>
+          <span><strong>${cities.size}</strong> ${cities.size === 1 ? 'ciudad' : 'ciudades'}</span>
+          <span><strong>${totalAvail.toLocaleString('es-ES')}</strong> entradas disponibles</span>
+        `;
+      }
+
+      (async function init() {
+        try {
+          const res = await fetch('sessions.json', { cache: 'no-store' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          SESSIONS = await res.json();
+          // Sort by date ascending so the next match is first.
+          SESSIONS.sort((a, b) => {
+            const ta = a.date_start ? new Date(a.date_start).getTime() : Infinity;
+            const tb = b.date_start ? new Date(b.date_start).getTime() : Infinity;
+            return ta - tb;
+          });
+          summarizeMeta(SESSIONS);
+          render(SESSIONS);
+        } catch (err) {
+          resultsCount.textContent = '';
+          state.innerHTML = `
+            <div class="error">
+              No se pudo cargar <strong>sessions.json</strong>.<br>
+              Genera el archivo ejecutando: <code>python3 fetch_sessions.py</code><br>
+              y abre esta página a través del servidor local: <code>http://localhost:8000/onebox-sessions-cards.html</code><br>
+              <small style="opacity:.7">Detalle: ${escapeHtml(err.message)}</small>
+            </div>`;
+        }
+      })();
+    </script>
+  </body>
+</html>

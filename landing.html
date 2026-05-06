@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RC Celta — ¡Avísame!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --celta-sky: #7AB1D9;
+        --celta-sky-dark: #5C97C2;
+        --celta-navy: #0A1A3F;
+        --celta-red: #E4002B;
+        --celta-red-dark: #B80022;
+        --page-bg: #F4F6F9;
+        --card-border: #E2E6EC;
+        --muted: #5A6478;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        color: var(--celta-navy);
+        line-height: 1.55;
+        background-color: var(--page-bg);
+      }
+
+
+      /* Top nav strip — mirrors rccelta.es light header */
+      .topbar {
+        background: #fff;
+        border-bottom: 1px solid var(--card-border);
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .topbar img {
+        height: 32px;
+        width: auto;
+      }
+
+      .topbar span {
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.95rem;
+        color: var(--celta-navy);
+      }
+
+      /* Hero */
+      header.hero {
+        background:
+          linear-gradient(180deg, rgba(10, 26, 63, 0.05), rgba(10, 26, 63, 0.18)),
+          var(--celta-sky);
+        color: #fff;
+        text-align: center;
+        padding: 4rem 1.5rem 4.5rem;
+        position: relative;
+      }
+
+      header.hero::after {
+        content: "";
+        display: block;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 6px;
+        background: var(--celta-navy);
+      }
+
+      header.hero img {
+        max-width: 130px;
+        height: auto;
+        margin-bottom: 1.25rem;
+        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.18));
+      }
+
+      header.hero h1 {
+        color: #fff;
+        margin: 0 0 0.75rem;
+        font-size: 2.75rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+      }
+
+      header.hero p {
+        margin: 0 auto;
+        max-width: 520px;
+        font-size: 1.05rem;
+        opacity: 0.95;
+      }
+
+      /* Bottom section — players photo behind the form card */
+      .page-bottom {
+        background:
+          linear-gradient(180deg, rgba(244, 246, 249, 0.4), rgba(10, 26, 63, 0.55)),
+          url("assets/players.jpeg") center/cover no-repeat;
+        padding-bottom: 3rem;
+      }
+
+      /* Form card */
+      main {
+        max-width: 520px;
+        margin: -2.5rem auto 0;
+        padding: 0 1rem;
+        position: relative;
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid var(--card-border);
+        border-radius: 6px;
+        padding: 2rem 1.75rem;
+        box-shadow: 0 4px 18px rgba(10, 26, 63, 0.06);
+      }
+
+      form p {
+        margin: 0 0 1.25rem;
+      }
+
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+        color: var(--celta-navy);
+      }
+
+      input[type="text"],
+      input[type="email"],
+      select {
+        width: 100%;
+        padding: 0.7rem 0.85rem;
+        font: inherit;
+        color: var(--celta-navy);
+        border: 1px solid #CBD2DC;
+        border-radius: 4px;
+        background: #fff;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--celta-sky);
+        box-shadow: 0 0 0 3px rgba(122, 177, 217, 0.25);
+      }
+
+      input[type="checkbox"] {
+        margin-right: 0.55rem;
+        accent-color: var(--celta-sky-dark);
+      }
+
+      form p:has(> label > input[type="checkbox"]) label {
+        font-weight: 400;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      button[type="submit"] {
+        display: block;
+        width: 100%;
+        padding: 0.95rem 1rem;
+        background-color: var(--celta-red);
+        color: #fff;
+        font: inherit;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+
+      button[type="submit"]:hover {
+        background-color: var(--celta-red-dark);
+      }
+
+      /* Footer */
+      footer {
+        background: var(--celta-navy);
+        color: #fff;
+        text-align: center;
+        padding: 1.5rem 1rem;
+        font-size: 0.85rem;
+        letter-spacing: 0.04em;
+      }
+
+      footer span {
+        opacity: 0.75;
+      }
+
+      @media (min-width: 640px) {
+        header.hero { padding: 5rem 2rem 5.5rem; }
+        header.hero h1 { font-size: 3.25rem; }
+        .card { padding: 2.5rem 2.25rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <img src="assets/Celta%20de%20Vigo.png" alt="">
+      <span>RC Celta</span>
+    </nav>
+
+    <header class="hero">
+      <img src="assets/Celta%20de%20Vigo.png" alt="Escudo del RC Celta">
+      <h1>¡Avísame!</h1>
+      <p>Déjanos tus datos y te avisaremos en cuanto se abra la venta de entradas para tu grada.</p>
+    </header>
+
+    <div class="page-bottom">
+    <main>
+      <form id="avisame-form" class="card" novalidate>
+        <p>
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" required>
+        </p>
+
+        <p>
+          <label for="apellidos">Apellidos</label>
+          <input type="text" id="apellidos" name="apellidos" required>
+        </p>
+
+        <p>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </p>
+
+        <p>
+          <label for="grada">Grada</label>
+          <select id="grada" name="grada" required>
+            <option value="" disabled selected>Selecciona una grada</option>
+            <option value="224515">Sector 316</option>
+            <option value="224514">Sector 315</option>
+            <option value="224513">Sector 314</option>
+            <option value="224512">Sector 313</option>
+            <option value="224519">Sector 320</option>
+            <option value="224518">Sector 319</option>
+            <option value="224517">Sector 318</option>
+            <option value="224516">Sector 317</option>
+            <option value="224521">Sector 322</option>
+            <option value="224520">Sector 321</option>
+            <option value="224531">Sector 107 E</option>
+            <option value="224530">Sector 106 E</option>
+            <option value="224529">Sector 105 E</option>
+            <option value="224535">Sector 113 D</option>
+            <option value="224534">Sector 112 D</option>
+            <option value="224533">Sector 109 E</option>
+            <option value="224532">Sector 108 E</option>
+            <option value="224539">Sector 119 E</option>
+            <option value="224538">Sector 118 E</option>
+            <option value="224537">Sector 115 D</option>
+            <option value="224536">Sector 114 D</option>
+            <option value="224542">Sector 122 E</option>
+            <option value="224541">Sector 121 E</option>
+            <option value="224540">Sector 120 E</option>
+            <option value="224551">Pista - B3</option>
+            <option value="224550">Pista - B2</option>
+            <option value="224549">Pista - B1</option>
+            <option value="224555">Pista A2</option>
+            <option value="224554">Pista A1</option>
+            <option value="224553">Pista C2</option>
+            <option value="224552">Pista C1</option>
+            <option value="224559">Pista B3</option>
+            <option value="224558">Pista B2</option>
+            <option value="224557">Pista B1</option>
+            <option value="224556">Pista A3</option>
+            <option value="224563">Minusvalidos A</option>
+            <option value="224562">Minusvalidos B</option>
+            <option value="224561">Pista - C2</option>
+            <option value="224560">Pista - C1</option>
+            <option value="224455">Sector 107</option>
+            <option value="224454">Sector 106</option>
+            <option value="224453">Sector 105</option>
+            <option value="224459">Sector 111</option>
+            <option value="224458">Sector 110</option>
+            <option value="224457">Sector 109</option>
+            <option value="224456">Sector 108</option>
+            <option value="224463">Sector 116</option>
+            <option value="224462">Sector 114</option>
+            <option value="224461">Sector 113</option>
+            <option value="224460">Sector 112</option>
+            <option value="224467">Sector 119</option>
+            <option value="224466">Sector 118</option>
+            <option value="224465">Sector 117</option>
+            <option value="224464">Sector 115</option>
+            <option value="224470">Sector 122</option>
+            <option value="224469">Sector 121</option>
+            <option value="224468">Sector 120</option>
+            <option value="224479">Sector Palco / Llotja</option>
+            <option value="224483">Sector 210</option>
+            <option value="224482">Sector 209</option>
+            <option value="224481">Sector 208</option>
+            <option value="224480">Sector 207</option>
+            <option value="224487">Sector 214</option>
+            <option value="224486">Sector 213</option>
+            <option value="224485">Sector 212</option>
+            <option value="224484">Sector 211</option>
+            <option value="224491">Sector 218</option>
+            <option value="224490">Sector 217</option>
+            <option value="224489">Sector 216</option>
+            <option value="224488">Sector 215</option>
+            <option value="224495">Sector 222</option>
+            <option value="224494">Sector 221</option>
+            <option value="224493">Sector 220</option>
+            <option value="224492">Sector 219</option>
+            <option value="224507">Sector 308</option>
+            <option value="224506">Sector 307</option>
+            <option value="224505">Sector 306</option>
+            <option value="224504">Sector 305</option>
+            <option value="224511">Sector 312</option>
+            <option value="224510">Sector 311</option>
+            <option value="224509">Sector 310</option>
+            <option value="224508">Sector 309</option>
+          </select>
+        </p>
+
+        <p>
+          <label>
+            <input type="checkbox" name="privacidad" required>
+            He leído y acepto la política de privacidad.
+          </label>
+        </p>
+
+        <p>
+          <button type="submit">Avísame</button>
+        </p>
+      </form>
+    </main>
+    </div>
+
+    <footer>
+      <span>© RC Celta de Vigo · ¡Avísame!</span>
+    </footer>
+
+    <script>
+      document.getElementById('avisame-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const data = Object.fromEntries(fd.entries());
+        data.privacidad = e.target.privacidad.checked;
+        console.log('Avísame submission:', data);
+      });
+    </script>
+  </body>
+</html>
