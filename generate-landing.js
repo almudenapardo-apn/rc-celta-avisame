@@ -90,6 +90,29 @@ async function getAvailability(token, id) {
   return res.json();
 }
 
+async function getSessions(token) {
+  const base = env.ONEBOX_BASE_URL.replace(/\/$/, "");
+  const url = `${base}/catalog-api/v1/sessions`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error(`Sessions failed: HTTP ${res.status}`);
+  const data = await res.json();
+  if (Array.isArray(data)) return data;
+  return data.sessions || data.data || data.items || [];
+}
+
+function pickEventName(session, fallback) {
+  if (!session) return fallback;
+  const t = session.event && session.event.texts && session.event.texts.title;
+  return (
+    (t && (t["es-ES"] || t["en-US"])) ||
+    (session.event && session.event.name) ||
+    session.name ||
+    fallback
+  );
+}
+
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
@@ -124,6 +147,19 @@ function rewriteSelect(html, sectors) {
   return html.replace(re, replacement);
 }
 
+function rewriteFormDataset(html, eventId, eventName) {
+  const re = /<form\s+id="avisame-form"[^>]*>/i;
+  if (!re.test(html)) {
+    throw new Error('Could not find <form id="avisame-form"> in landing.html');
+  }
+  const tag =
+    `<form id="avisame-form" class="card"` +
+    ` data-event-id="${escapeHtml(eventId)}"` +
+    ` data-event-name="${escapeHtml(eventName)}"` +
+    ` novalidate>`;
+  return html.replace(re, tag);
+}
+
 (async () => {
   console.log(`Authenticating with ONEBOX...`);
   const token = await getToken();
@@ -140,11 +176,18 @@ function rewriteSelect(html, sectors) {
     throw new Error("No sectors found in availability response.");
   }
 
-  const before = fs.readFileSync(LANDING_PATH, "utf8");
-  const after = rewriteSelect(before, sectors);
-  fs.writeFileSync(LANDING_PATH, after);
+  console.log(`Fetching /sessions to look up event title...`);
+  const allSessions = await getSessions(token);
+  const watched = allSessions.find((s) => String(s.id) === String(sessionId));
+  const eventName = pickEventName(watched, avail.name || "Partido");
+  console.log(`Event: id=${sessionId}, name="${eventName}"`);
 
-  console.log(`Baked ${sectors.length} sectors into landing.html.`);
+  let html = fs.readFileSync(LANDING_PATH, "utf8");
+  html = rewriteSelect(html, sectors);
+  html = rewriteFormDataset(html, sessionId, eventName);
+  fs.writeFileSync(LANDING_PATH, html);
+
+  console.log(`Baked ${sectors.length} sectors + event metadata into landing.html.`);
 })().catch((err) => {
   console.error(`Error: ${err.message}`);
   process.exit(1);

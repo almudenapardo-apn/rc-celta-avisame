@@ -4,6 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>RC Celta — ¡Avísame!</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5CMKM1LFL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-R5CMKM1LFL');
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -221,7 +231,7 @@
 
     <div class="page-bottom">
     <main>
-      <form id="avisame-form" class="card" novalidate>
+      <form id="avisame-form" class="card" data-event-id="240895" data-event-name="NUMERADO" novalidate>
         <p>
           <label for="nombre">Nombre</label>
           <input type="text" id="nombre" name="nombre" required>
@@ -347,10 +357,24 @@
     <script>
       document.getElementById('avisame-form').addEventListener('submit', (e) => {
         e.preventDefault();
-        const fd = new FormData(e.target);
+        const form = e.target;
+        const fd = new FormData(form);
         const data = Object.fromEntries(fd.entries());
-        data.privacidad = e.target.privacidad.checked;
+        data.privacidad = form.privacidad.checked;
         console.log('Avísame submission:', data);
+
+        // GA4 conversion event — fan asked to be notified about this match/grada
+        const sel = form.grada;
+        const opt = sel.options[sel.selectedIndex];
+        if (typeof window.gtag === 'function') {
+          gtag('event', 'generate_lead', {
+            event_id:    form.dataset.eventId,
+            event_name:  form.dataset.eventName,
+            grada_id:    sel.value,
+            grada_name:  opt ? opt.text : '',
+            is_duplicate: false,
+          });
+        }
       });
     </script>
   </body>
