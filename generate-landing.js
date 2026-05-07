@@ -104,10 +104,13 @@ async function getSessions(token) {
 
 function pickEventName(session, fallback) {
   if (!session) return fallback;
-  const t = session.event && session.event.texts && session.event.texts.title;
+  const event = session.event || {};
+  const t = event.texts && event.texts.title;
+  // event.name is the canonical event title (e.g. "RC Celta - Real Madrid").
+  // Fall back to localized texts.title and finally session.name.
   return (
+    event.name ||
     (t && (t["es-ES"] || t["en-US"])) ||
-    (session.event && session.event.name) ||
     session.name ||
     fallback
   );
