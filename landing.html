@@ -132,6 +132,109 @@
         box-shadow: 0 4px 18px rgba(10, 26, 63, 0.06);
       }
 
+      main > .card + .card { margin-top: 1.25rem; }
+
+      /* Match info card (above the form) */
+      .match-info__head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .match-info__subtitle {
+        margin: 0;
+        font-size: 0.74rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+      }
+      .match-info__title {
+        margin: 0.2rem 0 0;
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--celta-navy);
+        line-height: 1.2;
+      }
+      .match-info__status {
+        flex-shrink: 0;
+        padding: 0.32rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .status--on-sale {
+        color: #1F9D55;
+        background: #E6F6EC;
+        border: 1px solid rgba(31, 157, 85, 0.35);
+      }
+      .status--sold-out {
+        color: #C4173B;
+        background: #FCE5EA;
+        border: 1px solid rgba(196, 23, 59, 0.35);
+      }
+      .match-info__rows {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.55rem;
+      }
+      @media (min-width: 540px) {
+        .match-info__rows { grid-template-columns: repeat(3, auto); align-items: center; }
+      }
+      .match-info__row {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 0.88rem;
+        color: var(--celta-navy);
+      }
+      .match-info__icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        color: var(--celta-sky-dark);
+      }
+      .match-info__avail {
+        background: rgba(122, 177, 217, 0.12);
+        border-radius: 5px;
+        padding: 0.65rem 0.85rem;
+      }
+      .match-info__avail-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.45rem;
+        color: var(--muted);
+      }
+      .match-info__avail-head strong {
+        color: var(--celta-sky-dark);
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+      .match-info__avail-bar {
+        position: relative;
+        height: 6px;
+        background: #E0E8F0;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .match-info__avail-bar > span {
+        display: block;
+        height: 100%;
+        background: var(--celta-sky-dark);
+        border-radius: 3px;
+        transition: width 0.3s ease;
+      }
+
       form p {
         margin: 0 0 1.25rem;
       }
@@ -231,6 +334,37 @@
 
     <div class="page-bottom">
     <main>
+      <section id="match-info" class="card match-info">
+        <header class="match-info__head">
+          <div>
+          <p class="match-info__subtitle">GIRA 2019</p>
+            <h2 class="match-info__title">NUMERADO</h2>
+          </div>
+          <span class="match-info__status status--on-sale">On sale</span>
+        </header>
+        <ul class="match-info__rows">
+          <li class="match-info__row">
+            <svg class="match-info__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span>12 feb 2020, 21:00</span>
+          </li>
+          <li class="match-info__row">
+            <svg class="match-info__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span>Estadio Saprissa, Barcelona</span>
+          </li>
+          <li class="match-info__row">
+            <svg class="match-info__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <span>10 € – 50 €</span>
+          </li>
+        </ul>
+        <div class="match-info__avail">
+          <div class="match-info__avail-head">
+            <span>Disponibilidad</span>
+            <strong>14.372 / 14.786 (97%)</strong>
+          </div>
+          <div class="match-info__avail-bar"><span style="width:97%"></span></div>
+        </div>
+      </section>
+
       <form id="avisame-form" class="card" data-event-id="240895" data-event-name="NUMERADO" novalidate>
         <p>
           <label for="nombre">Nombre</label>
