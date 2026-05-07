@@ -235,6 +235,60 @@
         transition: width 0.3s ease;
       }
 
+      /* Inline form feedback (replaces the alert dialog) */
+      .form-feedback {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.85rem 1rem;
+        border-radius: 6px;
+        margin-bottom: 1.25rem;
+        font-size: 0.92rem;
+        line-height: 1.4;
+      }
+      .form-feedback svg {
+        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
+      }
+      .form-feedback p { margin: 0; }
+      .form-feedback strong { font-weight: 700; }
+
+      .form-feedback--error {
+        color: #842029;
+        background: #FCE5EA;
+        border: 1px solid rgba(196, 23, 59, 0.35);
+      }
+      .form-feedback--error svg { color: #C4173B; }
+
+      /* Success state takes over the whole card area: stack icon + heading + copy */
+      .form-feedback--success {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.6rem;
+        padding: 1.75rem 0.75rem 0.5rem;
+        margin: 0;
+        background: transparent;
+        border: 0;
+      }
+      .form-feedback--success svg {
+        width: 56px;
+        height: 56px;
+        color: #1F9D55;
+      }
+      .form-feedback--success h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--celta-navy);
+      }
+      .form-feedback--success p {
+        color: var(--muted);
+        max-width: 380px;
+      }
+
+      .form-fields-hidden { display: none !important; }
+
       form p {
         margin: 0 0 1.25rem;
       }
@@ -366,6 +420,7 @@
       </section>
 
       <form id="avisame-form" class="card" data-event-id="240895" data-event-name="* API NUMBERED EVENT" novalidate>
+        <div id="form-feedback" class="form-feedback" hidden role="status" aria-live="polite"></div>
         <p>
           <label for="nombre">Nombre</label>
           <input type="text" id="nombre" name="nombre" required>
@@ -522,9 +577,29 @@
         });
       }
 
-      document.getElementById('avisame-form').addEventListener('submit', async (e) => {
+      const form = document.getElementById('avisame-form');
+      const feedback = document.getElementById('form-feedback');
+      const formFields = form.querySelectorAll('p');
+
+      function showFeedback(kind, html) {
+        feedback.className = 'form-feedback form-feedback--' + kind;
+        feedback.innerHTML = html;
+        feedback.hidden = false;
+      }
+
+      function hideFeedback() {
+        feedback.hidden = true;
+        feedback.innerHTML = '';
+      }
+
+      function setFormHidden(hidden) {
+        formFields.forEach((el) => el.classList.toggle('form-fields-hidden', hidden));
+      }
+
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const form = e.target;
+        hideFeedback();
+
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalLabel = submitBtn ? submitBtn.textContent : null;
 
@@ -558,7 +633,12 @@
             submitBtn.disabled = false;
             submitBtn.textContent = originalLabel;
           }
-          alert('No hemos podido enviar tus datos. Comprueba tu conexión e inténtalo de nuevo.');
+          showFeedback('error', `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <p><strong>No hemos podido enviar tus datos.</strong> Comprueba tu conexión e inténtalo de nuevo.</p>
+          `);
           return;
         }
 
@@ -576,11 +656,16 @@
           });
         }
 
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalLabel;
-        }
-        alert('¡Listo! Te avisaremos en cuanto se abran nuevas entradas para tu grada.');
+        // Success: hide the form fields and show an inline confirmation in the card.
+        setFormHidden(true);
+        showFeedback('success', `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 12.5l2.5 2.5L16 9.5"></path>
+          </svg>
+          <h3>¡Listo!</h3>
+          <p>Te avisaremos en cuanto se abran nuevas entradas para tu grada.</p>
+        `);
         form.reset();
       });
     </script>
