@@ -26,10 +26,10 @@ TIMEOUT = 15
 # FNAME and LNAME ship with every Mailchimp audience by default — only the
 # four below need to be created.
 REQUIRED_MERGE_FIELDS = [
-    {"tag": "EVENT_ID", "name": "Event ID", "type": "text"},
-    {"tag": "EVENT",    "name": "Event",    "type": "text"},
-    {"tag": "GRADA_ID", "name": "Grada ID", "type": "text"},
-    {"tag": "GRADA",    "name": "Grada",    "type": "text"},
+    {"tag": "EVENT_ID",   "name": "Match ID",   "type": "number"},
+    {"tag": "EVENT_NAME", "name": "Match name", "type": "text"},
+    {"tag": "GRADA_ID",   "name": "Grada ID",   "type": "number"},
+    {"tag": "GRADA_NAME", "name": "Grada name", "type": "text"},
 ]
 
 

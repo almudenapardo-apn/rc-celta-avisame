@@ -288,7 +288,11 @@ function rewriteMatchInfo(html, info) {
   const allSessions = await getSessions(token);
   const watched = allSessions.find((s) => String(s.id) === String(sessionId));
   const eventName = pickEventName(watched, avail.name || "Partido");
-  console.log(`Event: id=${sessionId}, name="${eventName}"`);
+  // data-event-id stores the BROADER event id (session.event.id), not the
+  // session.id — this matches the segmentation model in the course brief
+  // (tag `event:{id}` and merge field EVENT_ID both refer to event.id).
+  const eventId = (watched && watched.event && watched.event.id) || sessionId;
+  console.log(`Event: event_id=${eventId} (session_id=${sessionId}), name="${eventName}"`);
 
   const venue = (watched && watched.venue) || {};
   const venueLocation = venue.location || {};
@@ -310,7 +314,7 @@ function rewriteMatchInfo(html, info) {
 
   let html = fs.readFileSync(LANDING_PATH, "utf8");
   html = rewriteSelect(html, sectors);
-  html = rewriteFormDataset(html, sessionId, eventName);
+  html = rewriteFormDataset(html, eventId, eventName);
   html = rewriteMatchInfo(html, matchInfo);
   fs.writeFileSync(LANDING_PATH, html);
 

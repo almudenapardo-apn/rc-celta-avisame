@@ -413,13 +413,13 @@
         <div class="match-info__avail">
           <div class="match-info__avail-head">
             <span>Disponibilidad</span>
-            <strong>14.372 / 14.786 (97%)</strong>
+            <strong>14.369 / 14.786 (97%)</strong>
           </div>
           <div class="match-info__avail-bar"><span style="width:97%"></span></div>
         </div>
       </section>
 
-      <form id="avisame-form" class="card" data-event-id="240895" data-event-name="* API NUMBERED EVENT" novalidate>
+      <form id="avisame-form" class="card" data-event-id="4587" data-event-name="* API NUMBERED EVENT" novalidate>
         <div id="form-feedback" class="form-feedback" hidden role="status" aria-live="polite"></div>
         <p>
           <label for="nombre">Nombre</label>
@@ -561,9 +561,9 @@
         params.append('FNAME', fname);
         params.append('LNAME', lname);
         params.append('EVENT_ID', eventId);
-        params.append('EVENT', eventName);
+        params.append('EVENT_NAME', eventName);
         params.append('GRADA_ID', gradaId);
-        params.append('GRADA', gradaName);
+        params.append('GRADA_NAME', gradaName);
         // Mailchimp anti-bot honeypot — must be empty for the submission to count.
         params.append(`b_${MAILCHIMP.U}_${MAILCHIMP.LIST_ID}`, '');
 
