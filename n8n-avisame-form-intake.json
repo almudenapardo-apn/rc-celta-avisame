@@ -1,0 +1,100 @@
+{
+  "name": "Avisame – Form intake",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "avisame-signup",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "webhookId": "avisame-signup-webhook"
+    },
+    {
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const body = $input.first().json.body || {};\nconst email = String(body.email || '').toLowerCase().trim();\nconst crypto = require('crypto');\nconst subscriber_hash = crypto.createHash('md5').update(email).digest('hex');\nreturn [{ json: { ...body, email, subscriber_hash } }];"
+      },
+      "id": "node-code",
+      "name": "Build payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://us15.api.mailchimp.com/3.0/lists/5afbdde6ab/members/{{ $json.subscriber_hash }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mailchimpApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  email_address: $json.email,\n  status_if_new: 'subscribed',\n  merge_fields: {\n    FNAME: $json.fname || '',\n    LNAME: $json.lname || '',\n    EVENT_ID: $json.event_id || '',\n    EVENT_NAME: $json.event_name || '',\n    GRADA_ID: $json.grada_id || '',\n    GRADA_NAME: $json.grada_name || ''\n  }\n}) }}",
+        "options": {}
+      },
+      "id": "node-mc-upsert",
+      "name": "Mailchimp upsert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://us15.api.mailchimp.com/3.0/lists/5afbdde6ab/members/{{ $('Build payload').item.json.subscriber_hash }}/tags",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mailchimpApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  tags: [\n    { name: 'event:' + $('Build payload').item.json.event_id, status: 'active' },\n    { name: 'grada:' + $('Build payload').item.json.grada_id, status: 'active' },\n    { name: 'source:avisame', status: 'active' }\n  ]\n}) }}",
+        "options": {}
+      },
+      "id": "node-mc-tags",
+      "name": "Mailchimp tags",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"ok\": true, \"email\": \"{{ $('Build payload').item.json.email }}\" }",
+        "options": {}
+      },
+      "id": "node-respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1040, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Build payload", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build payload": {
+      "main": [
+        [{ "node": "Mailchimp upsert", "type": "main", "index": 0 }]
+      ]
+    },
+    "Mailchimp upsert": {
+      "main": [
+        [{ "node": "Mailchimp tags", "type": "main", "index": 0 }]
+      ]
+    },
+    "Mailchimp tags": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {},
+  "pinData": {}
+}

@@ -544,37 +544,30 @@
     </footer>
 
     <script>
-      // Mailchimp hosted-form endpoint (subdomain, account "u" id, audience id).
-      // These are public — they appear in any embedded Mailchimp form HTML.
-      // No API key is sent from the browser.
-      const MAILCHIMP = {
-        SUBDOMAIN: 'github.us15',
-        U: '3d28829af5cd7fa8f0d2ab03a',
-        LIST_ID: '5afbdde6ab',
-      };
+      // n8n webhook ("Avisame – Form intake" workflow). The Mailchimp API key
+      // lives server-side inside the n8n credential — the browser never sees it.
+      // n8n upserts the contact (status: subscribed), sets the 6 merge fields,
+      // and stacks the segmentation tags event:{id} / grada:{id} / source:avisame.
+      const SIGNUP_ENDPOINT = 'https://almudenapardo.app.n8n.cloud/webhook/avisame-signup';
 
       async function subscribeToMailchimp({ email, fname, lname, eventId, eventName, gradaId, gradaName }) {
-        const params = new URLSearchParams();
-        params.append('u', MAILCHIMP.U);
-        params.append('id', MAILCHIMP.LIST_ID);
-        params.append('EMAIL', email);
-        params.append('FNAME', fname);
-        params.append('LNAME', lname);
-        params.append('EVENT_ID', eventId);
-        params.append('EVENT_NAME', eventName);
-        params.append('GRADA_ID', gradaId);
-        params.append('GRADA_NAME', gradaName);
-        // Mailchimp anti-bot honeypot — must be empty for the submission to count.
-        params.append(`b_${MAILCHIMP.U}_${MAILCHIMP.LIST_ID}`, '');
-
-        // mode:'no-cors' makes the browser treat this as a "simple" request
-        // (no preflight) and not surface the response. We can't read the
-        // server's reply, but Mailchimp processes the subscription server-side.
-        return fetch(`https://${MAILCHIMP.SUBDOMAIN}.list-manage.com/subscribe/post`, {
+        const res = await fetch(SIGNUP_ENDPOINT, {
           method: 'POST',
-          mode: 'no-cors',
-          body: params,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            fname: fname,
+            lname: lname,
+            event_id: eventId,
+            event_name: eventName,
+            grada_id: gradaId,
+            grada_name: gradaName,
+          }),
         });
+        if (!res.ok) {
+          throw new Error('Signup endpoint returned HTTP ' + res.status);
+        }
+        return res.json().catch(() => ({ ok: true }));
       }
 
       const form = document.getElementById('avisame-form');
@@ -643,9 +636,9 @@
         }
 
         // GA4 conversion event — fan asked to be notified about this match/grada.
-        // is_duplicate is always false here because the no-cors response is opaque
-        // (we can't tell if the email was already subscribed). When we move to a
-        // server-side proxy this can be set to true on Mailchimp's "Member Exists".
+        // is_duplicate stays false: the n8n workflow upserts unconditionally and
+        // doesn't currently report whether the email already existed. It can be
+        // wired later by returning that flag from the webhook's Respond node.
         if (typeof window.gtag === 'function') {
           gtag('event', 'generate_lead', {
             event_id:    eventId,
