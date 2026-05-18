@@ -5,13 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>RC Celta — ¡Avísame!</title>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MRVW0RCR6J"></script>
+    <!-- Google tag (gtag.js) — LSSI-CE: NOT loaded until the user accepts
+         cookies in the banner. gtag.js is injected only by loadGA4(). -->
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-MRVW0RCR6J');
+      function gtag(){ dataLayer.push(arguments); }
+      function loadGA4() {
+        if (window.__ga4Loaded) return;
+        window.__ga4Loaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-MRVW0RCR6J';
+        document.head.appendChild(s);
+        gtag('js', new Date());
+        gtag('config', 'G-MRVW0RCR6J');
+      }
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -372,6 +380,56 @@
         header.hero h1 { font-size: 3.25rem; }
         .card { padding: 2.5rem 2.25rem; }
       }
+
+      /* Cookie consent (LSSI-CE) — gates GA4 until accepted */
+      .cookie-banner {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        background: var(--celta-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1.25rem;
+        box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.25);
+      }
+      .cookie-banner[hidden] { display: none; }
+      .cookie-banner p {
+        margin: 0;
+        flex: 1 1 280px;
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+      .cookie-banner a { color: var(--celta-sky); }
+      .cookie-banner .cookie-actions {
+        display: flex;
+        gap: 0.6rem;
+        flex-shrink: 0;
+      }
+      .cookie-banner button {
+        font: inherit;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.6rem 1.15rem;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+      }
+      .cookie-accept {
+        background: var(--celta-red);
+        color: #fff;
+      }
+      .cookie-accept:hover { background: var(--celta-red-dark); }
+      .cookie-reject {
+        background: transparent;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+      }
+      .cookie-reject:hover { background: rgba(255, 255, 255, 0.1); }
     </style>
   </head>
   <body>
@@ -528,7 +586,7 @@
         <p>
           <label>
             <input type="checkbox" name="privacidad" required>
-            He leído y acepto la política de privacidad.
+            He leído y acepto la <a href="privacy.html" target="_blank" rel="noopener">política de privacidad</a> y consiento recibir avisos por email.
           </label>
         </p>
 
@@ -661,6 +719,42 @@
         `);
         form.reset();
       });
+    </script>
+
+    <!-- Cookie consent banner (LSSI-CE). GA4 stays unloaded until "Aceptar". -->
+    <div class="cookie-banner" id="cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies" hidden>
+      <p>
+        Usamos cookies de <strong>Google Analytics</strong> para medir el uso de la página.
+        No se carga ningún script de analítica hasta que lo aceptes.
+        Consulta nuestra <a href="privacy.html" target="_blank" rel="noopener">política de privacidad</a>.
+      </p>
+      <div class="cookie-actions">
+        <button type="button" class="cookie-reject" id="cookie-reject">Rechazar</button>
+        <button type="button" class="cookie-accept" id="cookie-accept">Aceptar</button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var KEY = 'avisame_cookie_consent';
+        var banner = document.getElementById('cookie-banner');
+        var choice = null;
+        try { choice = localStorage.getItem(KEY); } catch (e) {}
+
+        if (choice === 'accepted') {
+          loadGA4();                       // consent already given → load GA4
+        } else if (choice !== 'rejected') {
+          banner.hidden = false;           // no decision yet → show banner
+        }
+
+        function decide(value) {
+          try { localStorage.setItem(KEY, value); } catch (e) {}
+          banner.hidden = true;
+          if (value === 'accepted') loadGA4();
+        }
+        document.getElementById('cookie-accept').addEventListener('click', function () { decide('accepted'); });
+        document.getElementById('cookie-reject').addEventListener('click', function () { decide('rejected'); });
+      })();
     </script>
   </body>
 </html>
