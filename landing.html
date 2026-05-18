@@ -699,11 +699,13 @@
         // wired later by returning that flag from the webhook's Respond node.
         if (typeof window.gtag === 'function') {
           gtag('event', 'generate_lead', {
-            event_id:    eventId,
-            event_name:  eventName,
-            grada_id:    gradaId,
-            grada_name:  gradaName,
+            method:       'avisame_form',
+            event_id:     eventId,
+            event_name:   eventName,
+            grada_id:     gradaId,
+            grada_name:   gradaName,
             is_duplicate: false,
+            locale:       navigator.language || '',
           });
         }
 
