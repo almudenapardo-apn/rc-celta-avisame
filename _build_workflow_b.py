@@ -87,7 +87,7 @@ return [{ json: {
   watched_event_id: '4587',
   watched_event_name: '* API NUMBERED EVENT',
   resend_api_key: 'PASTE_RESEND_API_KEY_FROM_ENV',
-  email_from: 'avisame@student.ie.edu',
+  email_from: 'onboarding@resend.dev',
   email_from_name: 'RC Celta - Avisame',
   purchase_url_template: 'https://tickets.oneboxtds.com/rccelta/select/{sessionId}'
 }}];
@@ -139,21 +139,21 @@ wf = {
         "url": "https://api.resend.com/emails",
         "sendHeaders": True,
         "headerParameters": {"parameters": [
-            {"name": "Authorization", "value": "=Bearer {{ $('Vars').item.json.resend_api_key }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $('Vars').first().json.resend_api_key }}"},
             {"name": "Content-Type", "value": "application/json"}
         ]},
         "sendBody": True, "contentType": "json", "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ from: $('Vars').item.json.email_from_name + ' <' + $('Vars').item.json.email_from + '>', to: [$json.email], subject: $json.subject, html: $json.html }) }}",
+        "jsonBody": "={{ JSON.stringify({ from: $('Vars').first().json.email_from_name + ' <' + $('Vars').first().json.email_from + '>', to: [$json.email], subject: $json.subject, html: $json.html }) }}",
         "options": {}},
      "id": "n-resend", "name": "Resend Send",
      "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [1320, 300]},
     {"parameters": {
         "method": "POST",
-        "url": "=https://us15.api.mailchimp.com/3.0/lists/5afbdde6ab/members/{{ $('Match leads').item.json.subscriber_hash }}/tags",
+        "url": "=https://us15.api.mailchimp.com/3.0/lists/5afbdde6ab/members/{{ $json.subscriber_hash }}/tags",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "mailchimpApi",
         "sendBody": True, "contentType": "json", "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ tags: [{ name: $('Match leads').item.json.notified_tag, status: 'active' }] }) }}",
+        "jsonBody": "={{ JSON.stringify({ tags: [{ name: $json.notified_tag, status: 'active' }] }) }}",
         "options": {}},
      "id": "n-mc-notified", "name": "Mailchimp notified tag",
      "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [1520, 300]}
@@ -164,8 +164,7 @@ wf = {
     "ONEBOX Auth": {"main": [[{"node": "ONEBOX Availability", "type": "main", "index": 0}]]},
     "ONEBOX Availability": {"main": [[{"node": "Mailchimp members", "type": "main", "index": 0}]]},
     "Mailchimp members": {"main": [[{"node": "Match leads", "type": "main", "index": 0}]]},
-    "Match leads": {"main": [[{"node": "Resend Send", "type": "main", "index": 0}]]},
-    "Resend Send": {"main": [[{"node": "Mailchimp notified tag", "type": "main", "index": 0}]]}
+    "Match leads": {"main": [[{"node": "Resend Send", "type": "main", "index": 0}, {"node": "Mailchimp notified tag", "type": "main", "index": 0}]]}
   },
   "settings": {},
   "pinData": {}

@@ -15,7 +15,7 @@
     {
       "parameters": {
         "language": "javaScript",
-        "jsCode": "return [{ json: {\n  onebox_token_url: 'https://api.oneboxtds.net/oauth/token',\n  onebox_base_url: 'https://api.oneboxtds.net',\n  onebox_channel_id: '2287',\n  onebox_client_id: 'seller-channel-client',\n  onebox_client_secret: 'PASTE_ONEBOX_CLIENT_SECRET_FROM_ENV',\n  watched_session_id: '240895',\n  watched_event_id: '4587',\n  watched_event_name: '* API NUMBERED EVENT',\n  resend_api_key: 'PASTE_RESEND_API_KEY_FROM_ENV',\n  email_from: 'avisame@student.ie.edu',\n  email_from_name: 'RC Celta - Avisame',\n  purchase_url_template: 'https://tickets.oneboxtds.com/rccelta/select/{sessionId}'\n}}];"
+        "jsCode": "return [{ json: {\n  onebox_token_url: 'https://api.oneboxtds.net/oauth/token',\n  onebox_base_url: 'https://api.oneboxtds.net',\n  onebox_channel_id: '2287',\n  onebox_client_id: 'seller-channel-client',\n  onebox_client_secret: 'PASTE_ONEBOX_CLIENT_SECRET_FROM_ENV',\n  watched_session_id: '240895',\n  watched_event_id: '4587',\n  watched_event_name: '* API NUMBERED EVENT',\n  resend_api_key: 'PASTE_RESEND_API_KEY_FROM_ENV',\n  email_from: 'onboarding@resend.dev',\n  email_from_name: 'RC Celta - Avisame',\n  purchase_url_template: 'https://tickets.oneboxtds.com/rccelta/select/{sessionId}'\n}}];"
       },
       "id": "n-vars",
       "name": "Vars",
@@ -131,7 +131,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "=Bearer {{ $('Vars').item.json.resend_api_key }}"
+              "value": "=Bearer {{ $('Vars').first().json.resend_api_key }}"
             },
             {
               "name": "Content-Type",
@@ -142,7 +142,7 @@
         "sendBody": true,
         "contentType": "json",
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ from: $('Vars').item.json.email_from_name + ' <' + $('Vars').item.json.email_from + '>', to: [$json.email], subject: $json.subject, html: $json.html }) }}",
+        "jsonBody": "={{ JSON.stringify({ from: $('Vars').first().json.email_from_name + ' <' + $('Vars').first().json.email_from + '>', to: [$json.email], subject: $json.subject, html: $json.html }) }}",
         "options": {}
       },
       "id": "n-resend",
@@ -157,13 +157,13 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://us15.api.mailchimp.com/3.0/lists/5afbdde6ab/members/{{ $('Match leads').item.json.subscriber_hash }}/tags",
+        "url": "=https://us15.api.mailchimp.com/3.0/lists/5afbdde6ab/members/{{ $json.subscriber_hash }}/tags",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "mailchimpApi",
         "sendBody": true,
         "contentType": "json",
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ tags: [{ name: $('Match leads').item.json.notified_tag, status: 'active' }] }) }}",
+        "jsonBody": "={{ JSON.stringify({ tags: [{ name: $json.notified_tag, status: 'active' }] }) }}",
         "options": {}
       },
       "id": "n-mc-notified",
@@ -239,13 +239,7 @@
             "node": "Resend Send",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Resend Send": {
-      "main": [
-        [
+          },
           {
             "node": "Mailchimp notified tag",
             "type": "main",

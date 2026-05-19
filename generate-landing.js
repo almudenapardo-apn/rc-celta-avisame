@@ -22,6 +22,12 @@ const ENV_PATH = path.join(ROOT, ".env");
 const LANDING_PATH = path.join(ROOT, "landing.html");
 const DEFAULT_SESSION_ID = "240895";
 
+// Friendly display name for the watched match. The ONEBOX stage catalog
+// returns "* API NUMBERED EVENT"; we override it so the landing, the
+// Mailchimp EVENT_NAME merge field and the alert email all read sensibly.
+// Set to "" to fall back to the raw ONEBOX event name.
+const DISPLAY_EVENT_NAME = "Celta – Athletic · Jornada 29";
+
 function loadEnv(filePath) {
   if (!fs.existsSync(filePath)) return {};
   const out = {};
@@ -287,7 +293,7 @@ function rewriteMatchInfo(html, info) {
   console.log(`Fetching /sessions to look up event metadata...`);
   const allSessions = await getSessions(token);
   const watched = allSessions.find((s) => String(s.id) === String(sessionId));
-  const eventName = pickEventName(watched, avail.name || "Partido");
+  const eventName = DISPLAY_EVENT_NAME || pickEventName(watched, avail.name || "Partido");
   // data-event-id stores the BROADER event id (session.event.id), not the
   // session.id — this matches the segmentation model in the course brief
   // (tag `event:{id}` and merge field EVENT_ID both refer to event.id).
